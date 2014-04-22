@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 
@@ -16,6 +17,7 @@ namespace SiteGenerator
 
 
 
+
             foreach (var folder in categoryFolders)
             {
                 var dirInfo = new DirectoryInfo(folder);
@@ -25,13 +27,6 @@ namespace SiteGenerator
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
-                }
-                else
-                {
-                    foreach (var file in dirInfo.GetFiles())
-                    {
-                        file.Delete();
-                    }
                 }
 
                 var items = new Dictionary<string, MyProduct>();
@@ -57,8 +52,9 @@ namespace SiteGenerator
                         count++;
                         items[nameDetail[0]].Count = count;
                     }
-
-                    File.Copy(image.FullName, string.Format("{0}\\{1}-{2}.jpg", path, nameDetail[0].ToUrlSlug(), count));
+                    
+                    
+                    File.Copy(image.FullName, string.Format("{0}\\{1}-{2}.jpg", path, nameDetail[0].ToUrlSlug(), count), true);
                 }
 
                 
