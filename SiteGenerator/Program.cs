@@ -12,6 +12,10 @@ namespace SiteGenerator
 
             var sitePath = ConfigurationManager.AppSettings["SitePath"];
 
+            var applicationDir = ConfigurationManager.AppSettings["SiteGeneratorFolderPath"];
+
+
+
             foreach (var folder in categoryFolders)
             {
                 var dirInfo = new DirectoryInfo(folder);
@@ -21,6 +25,13 @@ namespace SiteGenerator
                 if (!Directory.Exists(path))
                 {
                     Directory.CreateDirectory(path);
+                }
+                else
+                {
+                    foreach (var file in dirInfo.GetFiles())
+                    {
+                        file.Delete();
+                    }
                 }
 
                 var items = new Dictionary<string, MyProduct>();
@@ -50,8 +61,10 @@ namespace SiteGenerator
                     File.Copy(image.FullName, string.Format("{0}\\{1}-{2}.jpg", path, nameDetail[0].ToUrlSlug(), count));
                 }
 
-                string rows = string.Empty;
-                int itemCount = 1;
+                
+
+                var rows = string.Empty;
+                var itemCount = 1;
                 foreach (var item in items)
                 {
                     var info = string.Format("<p>Bu ürünün fiyatı <strong>{0}</strong> TL dir.</p><br/><ul>", item.Value.Price);
@@ -61,7 +74,9 @@ namespace SiteGenerator
                     }
                     info += "</ul>";
 
-                    var productHtml = File.ReadAllText("urun.html");
+
+
+                    var productHtml = File.ReadAllText(applicationDir + "urun.html");
                     productHtml = productHtml.Replace("{info}", info).Replace("{0}", item.Key).Replace("{1}", dirInfo.Name);
 
                     File.WriteAllText(string.Format("{0}\\{1}.html", path, item.Value.ImageUrl), productHtml);
@@ -72,7 +87,7 @@ namespace SiteGenerator
                     itemCount++;
                 }
 
-                var categoryHtml = File.ReadAllText("kategori.html");
+                var categoryHtml = File.ReadAllText(applicationDir + "kategori.html");
                 categoryHtml = categoryHtml.Replace("{rows}", rows).Replace("{0}", dirInfo.Name);
 
                 File.WriteAllText(string.Format("{0}\\index.html", path), categoryHtml);
